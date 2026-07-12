@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Mail, Lock, ChevronRight } from "lucide-react";
+import { toast } from "react-toastify";
+import { authClient } from "@/lib/auth-client";
 
 // ─── Role-based redirect map ───────────────────────────────────────────────────
 const ROLE_REDIRECT: Record<string, string> = {
@@ -31,13 +33,11 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading]       = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [error, setError]               = useState<string | null>(null);
 
   // ── Handlers ────────────────────────────────────────────────────────────────
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (error) setError(null);
   };
 
   /** Redirect user to the correct path based on their role */
@@ -49,46 +49,58 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
-    try {
-      // TODO: Replace with better-auth signIn call
-      // const { data, error } = await authClient.signIn.email({
-      //   email: formData.email,
-      //   password: formData.password,
-      // });
-      // if (error) throw error;
-      // redirectByRole(data.user.role);
 
-      // ── Mock: simulate a successful login ──
-      const mockRole = "client"; // swap to "freelancer" or "admin" to test
-      redirectByRole(mockRole);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Invalid email or password.";
-      setError(message);
-    } finally {
-      setIsLoading(false);
+    const { data, error } = await authClient.signIn.email({
+      email:    formData.email,
+      password: formData.password,
+    });
+
+    setIsLoading(false);
+
+    if (error) {
+      toast.error(
+        (error as { message?: string }).message ?? "Invalid email or password.",
+        {
+          position: "top-center",
+          theme: "colored",
+        }
+      );
+      return;
     }
+
+    const userName  = (data?.user as { name?: string })?.name ?? "there";
+    const userRole  = (data?.user as { role?: string })?.role  ?? "client";
+
+    toast.success(
+      <div>
+        <p className="font-semibold text-sm">👋 Welcome back, {userName.split(" ")[0]}!</p>
+        <p className="text-xs mt-0.5 opacity-90">You are signed in. Redirecting…</p>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: 2500,
+      }
+    );
+
+    setTimeout(() => redirectByRole(userRole), 1600);
   };
 
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
-    setError(null);
     try {
       // TODO: Replace with better-auth Google OAuth
       // const { data, error } = await authClient.signIn.social({ provider: "google" });
       // if (error) throw error;
-      // Google users are always Clients
       // redirectByRole(data.user.role ?? "client");
-
-      // ── Mock ──
       redirectByRole("client");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Google sign-in failed.";
-      setError(message);
+      toast.error(message, { position: "top-center", theme: "colored" });
     } finally {
       setGoogleLoading(false);
     }
   };
+
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -107,21 +119,21 @@ export default function LoginPage() {
         <div className="rounded-2xl bg-white dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 shadow-2xl shadow-zinc-200/50 dark:shadow-zinc-950 backdrop-blur-sm overflow-hidden">
 
           {/* Top gradient stripe */}
-          <div className="h-1 w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600" />
+          <div className="h-1 w-full bg-linear-to-r from-cyan-500 via-blue-600 to-purple-600" />
 
           <div className="px-8 pt-8 pb-10">
 
             {/* Header */}
             <div className="mb-8 text-center">
               <Link href="/" className="inline-flex items-center gap-2 justify-center group mb-6">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-shadow duration-200">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-cyan-500 via-blue-600 to-purple-600 shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-shadow duration-200">
                   <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5 text-white" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 2L2 7l10 5 10-5-10-5z" />
                     <path d="M2 17l10 5 10-5" />
                     <path d="M2 12l10 5 10-5" />
                   </svg>
                 </span>
-                <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="text-xl font-extrabold tracking-tight bg-linear-to-r from-cyan-500 via-blue-600 to-purple-600 bg-clip-text text-transparent">
                   SkillSwap
                 </span>
               </Link>
@@ -154,16 +166,6 @@ export default function LoginPage() {
               <span className="text-xs font-medium text-zinc-400 dark:text-zinc-500">or sign in with email</span>
               <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
             </div>
-
-            {/* Error Banner */}
-            {error && (
-              <div className="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-950/30 px-4 py-3 text-sm text-red-700 dark:text-red-400">
-                <svg className="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
-                </svg>
-                {error}
-              </div>
-            )}
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -230,7 +232,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading || googleLoading}
-                className="mt-2 w-full h-11 rounded-md bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-sm font-semibold text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-purple-500/30 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+                className="mt-2 w-full h-11 rounded-md bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-sm font-semibold text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-purple-500/30 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
