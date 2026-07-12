@@ -1,6 +1,7 @@
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import HowItWorks from "@/components/HowItWorks";
+import Talent from "@/components/Talent";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
         <Hero />
         <Categories />
         <HowItWorks />
+        <Talent />
       </main>
     </div>
   );

@@ -22,7 +22,7 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section className="bg-white dark:bg-zinc-950 py-20 px-4 sm:px-6 lg:px-8 border-t border-zinc-100 dark:border-zinc-900 transition-colors duration-200">
+    <section className="bg-white dark:bg-zinc-950 py-20 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
       <div className="mx-auto max-w-7xl">
         {/* Title */}
         <div className="text-center mb-20">

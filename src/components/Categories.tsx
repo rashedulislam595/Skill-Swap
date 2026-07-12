@@ -50,11 +50,12 @@ export default function Categories() {
   ];
 
   return (
-    <section className="bg-white dark:bg-zinc-950 py-16 px-4 sm:px-6 lg:px-8 border-t border-zinc-100 dark:border-zinc-900 transition-colors duration-200">
+    <section className="bg-white dark:bg-zinc-950 py-16 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
       <div className="mx-auto max-w-7xl">
         {/* Header section */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-10 gap-4">
-          <div>
+        <div className="mb-10">
+          {/* Title & Description - centered */}
+          <div className="text-center">
             <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
               Popular Categories
             </h2>
@@ -62,13 +63,16 @@ export default function Categories() {
               Find specialized talent across all modern industries.
             </p>
           </div>
-          <Link
-            href="/categories"
-            className="group inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-150"
-          >
-            View All
-            <span className="ml-1.5 transition-transform duration-200 group-hover:translate-x-1">→</span>
-          </Link>
+          {/* View All link - right aligned on its own row */}
+          <div className="flex justify-end mt-4">
+            <Link
+              href="/categories"
+              className="group inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-150"
+            >
+              View All
+              <span className="ml-1.5 transition-transform duration-200 group-hover:translate-x-1">→</span>
+            </Link>
+          </div>
         </div>
 
         {/* Categories Grid */}
