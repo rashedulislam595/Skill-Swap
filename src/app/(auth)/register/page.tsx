@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff, User, Mail, ImageIcon, Lock, Check, X, ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff, User, Mail, ImageIcon, Lock, Check, X, ChevronRight, Code2 } from "lucide-react";
+import { toast } from "react-toastify";
+import { authClient } from "@/lib/auth-client";
 
 // ─── Password Validation Rules ────────────────────────────────────────────────
 const passwordRules = [
@@ -23,13 +26,23 @@ function GoogleIcon() {
   );
 }
 
+// ─── Role-based redirect map ─────────────────────────────────────────────────
+const ROLE_REDIRECT: Record<string, string> = {
+  client:     "/",
+  freelancer: "/dashboard/freelancer",
+};
+
 export default function RegisterPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     imageUrl: "",
     password: "",
     role: "client" as "client" | "freelancer",
+    skills: "",
+    bio: "",
+    hourlyRate: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +56,7 @@ export default function RegisterPage() {
   const showPasswordHints = formData.password.length > 0;
 
   // ── Handlers ──────────────────────────────────────────────────────────────
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -56,21 +69,50 @@ export default function RegisterPage() {
     e.preventDefault();
     if (!passwordValid) return;
     setIsLoading(true);
-    try {
-      // TODO: Replace with better-auth signUp call
-      // await authClient.signUp.email({
-      //   name: formData.name,
-      //   email: formData.email,
-      //   password: formData.password,
-      //   image: formData.imageUrl,
-      //   role: formData.role,
-      // });
-      console.log("Register payload:", formData);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
+
+    const { error } = await authClient.signUp.email({
+      name:     formData.name,
+      email:    formData.email,
+      password: formData.password,
+      image:    formData.imageUrl || undefined,
+      // extra fields stored alongside the user
+      role:        formData.role,
+      skills:      formData.role === "freelancer" ? formData.skills : undefined,
+      bio:         formData.role === "freelancer" ? formData.bio : undefined,
+      hourlyRate:  formData.role === "freelancer" && formData.hourlyRate
+                     ? Number(formData.hourlyRate)
+                     : undefined,
+    } as Parameters<typeof authClient.signUp.email>[0]);
+
+    setIsLoading(false);
+
+    if (error) {
+      toast.error(
+        (error as { message?: string }).message ?? "Registration failed. Please try again.",
+        {
+          position: "top-center",
+          theme: "colored",
+        }
+      );
+      return;
     }
+
+    toast.success(
+      <div>
+        <p className="font-semibold text-sm">🎉 Account created successfully!</p>
+        <p className="text-xs mt-0.5 opacity-90">
+          Welcome to SkillSwap, {formData.name.split(" ")[0]}! Redirecting you now…
+        </p>
+      </div>,
+      {
+        position: "top-center",
+      }
+    );
+
+    // Redirect after a short delay so the user can read the toast
+    setTimeout(() => {
+      router.push(ROLE_REDIRECT[formData.role] ?? "/");
+    }, 1800);
   };
 
   const handleGoogleSignUp = async () => {
@@ -104,21 +146,21 @@ export default function RegisterPage() {
         <div className="rounded-2xl bg-white dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 shadow-2xl shadow-zinc-200/50 dark:shadow-zinc-950 backdrop-blur-sm overflow-hidden">
 
           {/* Top gradient stripe */}
-          <div className="h-1 w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600" />
+          <div className="h-1 w-full bg-linear-to-r from-cyan-500 via-blue-600 to-purple-600" />
 
           <div className="px-8 pt-8 pb-10">
 
             {/* Header */}
             <div className="mb-8 text-center">
               <Link href="/" className="inline-flex items-center gap-2 justify-center group mb-6">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-shadow duration-200">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-cyan-500 via-blue-600 to-purple-600 shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-shadow duration-200">
                   <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5 text-white" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 2L2 7l10 5 10-5-10-5z" />
                     <path d="M2 17l10 5 10-5" />
                     <path d="M2 12l10 5 10-5" />
                   </svg>
                 </span>
-                <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="text-xl font-extrabold tracking-tight bg-linear-to-r from-cyan-500 via-blue-600 to-purple-600 bg-clip-text text-transparent">
                   SkillSwap
                 </span>
               </Link>
@@ -317,11 +359,75 @@ export default function RegisterPage() {
                 </div>
               </div>
 
+              {/* Freelancer Profile Section */}
+              {formData.role === "freelancer" && (
+                <div className="flex flex-col gap-4 rounded-xl border border-purple-200 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-950/20 p-4">
+                  {/* Section Header */}
+                  <div className="flex items-center gap-2">
+                    <Code2 className="h-4 w-4 text-purple-500" />
+                    <span className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">
+                      Freelancer Profile
+                    </span>
+                  </div>
+
+                  {/* Skills */}
+                  <div className="flex flex-col gap-1.5">
+                    <label htmlFor="skills" className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+                      Skills
+                      <span className="ml-1.5 normal-case font-normal text-zinc-400">(comma-separated)</span>
+                    </label>
+                    <input
+                      id="skills"
+                      name="skills"
+                      type="text"
+                      placeholder="React, Node.js, Design"
+                      value={formData.skills}
+                      onChange={handleChange}
+                      className="w-full h-10 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-150"
+                    />
+                  </div>
+
+                  {/* Bio */}
+                  <div className="flex flex-col gap-1.5">
+                    <label htmlFor="bio" className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+                      Bio
+                    </label>
+                    <textarea
+                      id="bio"
+                      name="bio"
+                      rows={3}
+                      placeholder="Tell clients about yourself..."
+                      value={formData.bio}
+                      onChange={handleChange}
+                      className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-150 resize-none"
+                    />
+                  </div>
+
+                  {/* Hourly Rate */}
+                  <div className="flex flex-col gap-1.5">
+                    <label htmlFor="hourlyRate" className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+                      Hourly Rate (USD)
+                      <span className="ml-1.5 normal-case font-normal text-zinc-400">optional</span>
+                    </label>
+                    <input
+                      id="hourlyRate"
+                      name="hourlyRate"
+                      type="number"
+                      min="0"
+                      placeholder="50"
+                      value={formData.hourlyRate}
+                      onChange={handleChange}
+                      className="w-full h-10 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-150"
+                    />
+                  </div>
+                </div>
+              )}
+
               {/* Submit */}
               <button
                 type="submit"
                 disabled={isLoading || !passwordValid}
-                className="mt-2 w-full h-11 rounded-md bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-sm font-semibold text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-purple-500/30 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+                className="mt-2 w-full h-11 rounded-md bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-sm font-semibold text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-purple-500/30 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
