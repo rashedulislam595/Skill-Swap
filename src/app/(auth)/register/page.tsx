@@ -118,12 +118,23 @@ export default function RegisterPage() {
   const handleGoogleSignUp = async () => {
     setGoogleLoading(true);
     try {
-      // TODO: Replace with better-auth Google OAuth
-      // await authClient.signIn.social({ provider: "google" });
-      // Google users are automatically saved as Client role
-      console.log("Google sign-up → role: client");
-    } catch (err) {
-      console.error(err);
+      const { data, error } = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
+      if (data) {
+        toast.success("Redirecting to Google...", {
+          position: "top-center",
+        })
+      } else {
+        toast.error(error.message || "Google sign-up failed.", {
+          position: "top-center",
+          theme: "colored",
+        });
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Google sign-up failed.";
+      toast.error(message, { position: "top-center", theme: "colored" });
     } finally {
       setGoogleLoading(false);
     }

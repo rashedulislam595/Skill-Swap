@@ -53,6 +53,7 @@ export default function LoginPage() {
     const { data, error } = await authClient.signIn.email({
       email:    formData.email,
       password: formData.password,
+      callbackURL: "/",
     });
 
     setIsLoading(false);
@@ -88,11 +89,21 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     try {
-      // TODO: Replace with better-auth Google OAuth
-      // const { data, error } = await authClient.signIn.social({ provider: "google" });
-      // if (error) throw error;
-      // redirectByRole(data.user.role ?? "client");
-      redirectByRole("client");
+      const { data, error } = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
+      if (data) {
+        toast.success("Redirecting to Google...", {
+          position: "top-center",
+        });
+      } else {
+        
+        toast.error(error.message || "Google sign-in failed.", {
+          position: "top-center",
+          theme: "colored",
+        });
+      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Google sign-in failed.";
       toast.error(message, { position: "top-center", theme: "colored" });

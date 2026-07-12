@@ -6,36 +6,42 @@ const client = new MongoClient(process.env.MONGO_URI as string);
 const db = client.db('skill-swap');
 
 export const auth = betterAuth({
-  database: mongodbAdapter(db, {
-    // Optional: if you don't provide a client, database transactions won't be enabled.
-    client
-  }),
-  emailAndPassword: {
-    enabled: true,
-  },
-  user: {
-    additionalFields: {
-      role: {
-        type: "string",
-        required: false,
-        defaultValue: "client",
-        input: true,
-      },
-      skills: {
-        type: "string",
-        required: false,
-        input: true,
-      },
-      bio: {
-        type: "string",
-        required: false,
-        input: true,
-      },
-      hourlyRate: {
-        type: "number",
-        required: false,
-        input: true,
-      },
+    database: mongodbAdapter(db, {
+        // Optional: if you don't provide a client, database transactions won't be enabled.
+        client
+    }),
+    socialProviders: {
+        google: {
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+        },
     },
-  },
-});
+    emailAndPassword: {
+        enabled: true,
+    },
+    user: {
+        additionalFields: {
+            role: {
+                type: "string",
+                required: false,
+                defaultValue: "client",
+                input: true,
+            },
+            skills: {
+                type: "string",
+                required: false,
+                input: true,
+            },
+            bio: {
+                type: "string",
+                required: false,
+                input: true,
+            },
+            hourlyRate: {
+                type: "number",
+                required: false,
+                input: true,
+            },
+        },
+    },
+});
