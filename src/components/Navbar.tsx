@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Code2 } from "lucide-react";
 import { useSession, authClient } from "@/lib/auth-client";
 import Image from "next/image";
@@ -10,6 +10,7 @@ import { Spinner } from "@heroui/react";
 import { toast } from "react-toastify";
 
 export default function Navbar() {
+  const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -19,9 +20,21 @@ export default function Navbar() {
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "Browse Tasks", href: "/browse-tasks" },
-    { name: "Browse Freelancers", href: "/browse-freelancers" },
-    ...(!isPending && user ? [{ name: "Dashboard", href: "/dashboard" }] : []),
+    { name: "Browse Freelancers", href: "/browse-freelancers" }
   ];
+
+  const dashboardLinks: Record<string, string> = {
+  reader: '/dashboard/client',
+  writer: '/dashboard/freelancer',
+  admin: '/dashboard/admin',
+};
+
+if (user?.email) {
+  navLinks.push({
+    name: "Dashboard",
+    href: dashboardLinks[user?.role ?? ''] ?? '/dashboard/client',
+  });
+}
 
   const isActive = (href: string) => {
     if (href === "/" && pathname === "/") return true;
@@ -36,7 +49,7 @@ export default function Navbar() {
         position: "top-center",
       });
 
-      window.location.href = "/";
+      router.push("/");
     } catch (error) {
       console.error(error);
 
