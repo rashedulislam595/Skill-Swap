@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   description: "Post a new task to find the perfect professional for the job.",
 };
 
-export default function PostTaskPage() {
-  return <PostTaskForm />;
+import { getUserSession } from "@/lib/core/session";
+
+export default async function PostTaskPage() {
+  const user = await getUserSession();
+  return <PostTaskForm clientId={user?.id} />;
 }

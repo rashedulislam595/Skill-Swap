@@ -6,7 +6,7 @@ import { createTask } from "@/lib/action/task";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-export default function PostTaskForm() {
+export default function PostTaskForm({ clientId }: { clientId?: string }) {
   const router = useRouter();
   const [formData, setFormData] = useState({
     title: "",
@@ -24,7 +24,12 @@ export default function PostTaskForm() {
   const handlePublish = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const result = await createTask(formData);
+    const taskData = {
+      ...formData,
+      clientId,
+    }
+
+    const result = await createTask(taskData);
     if(result.insertedId) {
       toast.success("Task published successfully!",{
         position: "top-center",
@@ -43,7 +48,7 @@ export default function PostTaskForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 font-sans">
+    <div className="p-2 sm:p-4 lg:p-6 font-sans">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Post a New Task</h1>
         <p className="text-gray-600 dark:text-gray-400">Define your project requirements and find the perfect professional for the job.</p>
@@ -80,7 +85,7 @@ export default function PostTaskForm() {
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-zinc-700 bg-gray-50/50 dark:bg-zinc-800/50 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-zinc-700 bg-gray-200 dark:bg-zinc-800/50 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none cursor-pointer"
                   required
                 >
                   <option value="" disabled>Select category</option>
