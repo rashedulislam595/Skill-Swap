@@ -2,8 +2,12 @@
 
 import React, { useState } from "react";
 import { Info, Bold, Italic, List, Link as LinkIcon, Image as ImageIcon } from "lucide-react";
+import { createTask } from "@/lib/action/task";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function PostTaskForm() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -19,22 +23,18 @@ export default function PostTaskForm() {
 
   const handlePublish = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock API Call
-    console.log("Publishing task...", formData);
-    /*
-    try {
-      // const response = await fetch('/api/tasks', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ ...formData, status: 'Open' }),
-      // });
-      // if (response.ok) {
-      //   // Handle success redirect or toast
-      // }
-    } catch (error) {
-      console.error(error);
+
+    const result = await createTask(formData);
+    if(result.insertedId) {
+      toast.success("Task published successfully!",{
+        position: "top-center",
+      });
+      router.push('/dashboard/client/my-tasks');
+    }else {
+      toast.error("Failed to publish task.",{
+        position: "top-center",
+      });
     }
-    */
   };
 
   const handleSaveDraft = () => {
@@ -196,7 +196,7 @@ export default function PostTaskForm() {
             </button>
             <button
               type="submit"
-              className="w-full sm:w-auto px-8 py-2.5 font-medium text-white bg-[#0f766e] hover:bg-[#115e59] dark:bg-[#0f766e] dark:hover:bg-[#0d9488] rounded-lg shadow-sm transition-colors focus:outline-none"
+              className="w-full sm:w-auto px-8 py-2.5 font-medium text-white bg-linear-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 text-sm  shadow-md shadow-blue-500/10 transition-colors duration-200 rounded-lg hover:bg-linear-to-r hover:rom-purple-600 hover:to-blue-600 dark:hover:from-purple-500 dark:hover:to-blue-500 focus:outline-none"
             >
               Publish Task
             </button>

@@ -24,8 +24,8 @@ export default function Navbar() {
   ];
 
   const dashboardLinks: Record<string, string> = {
-  reader: '/dashboard/client',
-  writer: '/dashboard/freelancer',
+  client: '/dashboard/client',
+  freelancer: '/dashboard/freelancer',
   admin: '/dashboard/admin',
 };
 
