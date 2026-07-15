@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🤝 SkillSwap — Freelancing & Skill Exchange Platform
 
-## Getting Started
+SkillSwap is a premium, secure, and modern freelancing and skill-exchange application built using Next.js 15+ (App Router), Better Auth, Express, and MongoDB. The platform matches clients with skilled freelancers and writers while ensuring strict role-based access control (RBAC) and system administration moderation.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Live Deployments
+
+- **Frontend Application:** [https://skill-swap-roan-nine.vercel.app](https://skill-swap-roan-nine.vercel.app)
+- **Backend API Server:** [https://skill-swap-server-six.vercel.app](https://skill-swap-server-six.vercel.app)
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework:** Next.js 15+ (React Server Components, App Router)
+- **Styling:** Tailwind CSS & Vanilla CSS (Harmonious Dark/Light themes)
+- **Icons:** Lucide React
+- **Auth Client:** Better Auth React Client
+- **State Management / Toasting:** React Toastify
+
+### Backend
+- **Framework:** Node.js, Express.js (TypeScript)
+- **Database:** MongoDB Atlas (Native driver for optimized lazy query routing)
+- **Security Middleware:** Custom token-based Bearer verification & role authentication
+- **Compiler:** TS-Node-Dev / TypeScript
+
+---
+
+## 🔑 Key Features
+
+### 👤 Role-Based Portals (RBAC)
+- **Client Dashboard:** Post new tasks, manage active listings, review freelancer proposals, and update details.
+- **Freelancer Dashboard:** Browse active tasks, submit custom project proposals, edit profiles (skills, bio, hourly rate), and monitor earnings growth.
+- **Admin Dashboard:** Access global platform stats (Total Users, Total Tasks, Active Listings, Stripe Revenue), moderate tasks (delete violations), and manage accounts (block/unblock users).
+
+### 🛡️ Hardened Security Architecture
+- **Route Guards:** Page-level & Layout-level Server Component guards preventing cross-portal route intrusion.
+- **Token Protection:** Express API endpoints are protected using Bearer tokens verified directly against Better Auth's MongoDB session instances.
+- **Context Preservation:** Auth validation is seamlessly resolved on server-side and client-side scopes without losing user workflow context.
+
+### 🌐 Performance & Visuals
+- **Dynamic SEO:** Custom page metadata for optimal search engine performance.
+- **Professional States:** Skeleton loader cards, clean 404 pages, global error boundary pages, and toast feedback for all interactions.
+
+---
+
+## ⚙️ Environment Variables
+
+Create a `.env` file in the **frontend root (`/skill-swap`)**:
+
+```env
+# Better Auth Keys
+BETTER_AUTH_SECRET=your_auth_secret_key
+BETTER_AUTH_URL=https://your-frontend-domain.vercel.app # http://localhost:3000 locally
+
+# Database Connection
+MONGO_URI=mongodb+srv://...
+
+# OAuth Providers
+GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# Backend API endpoint
+NEXT_PUBLIC_API_URL=https://your-backend-api.vercel.app # http://localhost:5000 locally
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create a `.env` file in the **backend root (`/skill-swap-server`)**:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+PORT=5000
+MONGO_DB_URI=mongodb+srv://...
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 💻 Getting Started Locally
 
-To learn more about Next.js, take a look at the following resources:
+### 1. Set Up Backend Server
+```bash
+cd skill-swap-server
+npm install
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. Set Up Frontend App
+```bash
+cd skill-swap
+npm install
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open [http://localhost:3000](http://localhost:3000) to view the client application in your browser.
