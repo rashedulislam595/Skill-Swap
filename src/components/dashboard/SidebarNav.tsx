@@ -80,7 +80,7 @@ export default function SidebarNav({ user }: SidebarNavProps) {
       items: [
         { icon: LayoutGrid, href: "/dashboard/freelancer", label: "Dashboard" },
         { icon: Search, href: "/browse-tasks", label: "Browse Tasks" },
-        { icon: FileText, href: "/dashboard/freelancer/proposals", label: "My Proposals" },
+        { icon: FileText, href: "/dashboard/freelancer/my-proposals", label: "My Proposals" },
         { icon: ClipboardList, href: "/dashboard/freelancer/projects", label: "Active Projects" },
         { icon: Banknote, href: "/dashboard/freelancer/earnings", label: "My Earnings" },
         { icon: UserCircle, href: "/dashboard/freelancer/profile", label: "Profile" },
