@@ -21,3 +21,7 @@ export const getTaskByClientId = async (id: string): Promise<Task[]> => {
 export const getAllTasks = async (): Promise<Task[]> => {
   return serverFetch<Task[]>(`/api/tasks`);
 }
+
+export const getTaskById = async (id: string): Promise<Task | null> => {
+  return serverFetch<Task | null>(`/api/tasks/${id}`);
+}
