@@ -12,12 +12,13 @@ export const metadata: Metadata = {
 export default async function EditTaskPage({
   params,
 }: {
-  params: { taskId: string };
+  params: Promise<{ taskId: string }>;
 }) {
+  const { taskId } = await params;
   const user = await getUserSession();
   if (!user) redirect("/");
 
-  const task = await getTaskById(params.taskId);
+  const task = await getTaskById(taskId);
   if (!task) redirect("/dashboard/client/my-tasks");
 
   // Authorization check: only the client who posted the task (or admin) can edit
