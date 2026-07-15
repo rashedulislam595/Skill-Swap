@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getUserSession } from "@/lib/core/session";
+import { requireRole } from "@/lib/core/session";
 import { getAdminTasks, type AdminTask } from "@/lib/api/admin";
 import AdminTasksTable from "@/components/dashboard/admin/AdminTasksTable";
 import { SlidersHorizontal, ClipboardList } from "lucide-react";
@@ -10,8 +10,7 @@ export const metadata = {
 };
 
 export default async function AdminTasksPage() {
-  const user = await getUserSession();
-  if (!user || user.role !== "admin") redirect("/");
+  await requireRole("admin");
 
   let tasks: AdminTask[] = [];
   try {

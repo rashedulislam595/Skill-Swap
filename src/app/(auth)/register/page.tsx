@@ -120,7 +120,7 @@ export default function RegisterPage() {
     try {
       const { data, error } = await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/",
+        callbackURL: "/auth-callback",
       });
       if (data) {
         toast.success("Redirecting to Google...", {

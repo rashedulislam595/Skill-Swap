@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getUserSession } from "@/lib/core/session";
+import { requireRole } from "@/lib/core/session";
 import { getAdminUsers, type AdminUser } from "@/lib/api/admin";
 import AdminUsersTable from "@/components/dashboard/admin/AdminUsersTable";
 import { Users, ShieldCheck } from "lucide-react";
@@ -10,8 +10,7 @@ export const metadata = {
 };
 
 export default async function AdminUsersPage() {
-  const user = await getUserSession();
-  if (!user || user.role !== "admin") redirect("/");
+  await requireRole("admin");
 
   let users: AdminUser[] = [];
   try {

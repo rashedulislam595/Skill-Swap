@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getUserSession } from "@/lib/core/session";
+import { requireRole } from "@/lib/core/session";
 import { getAdminTransactions, type AdminTransaction } from "@/lib/api/admin";
 import AdminTransactionsTable from "@/components/dashboard/admin/AdminTransactionsTable";
 import { History, CreditCard } from "lucide-react";
@@ -10,8 +10,7 @@ export const metadata = {
 };
 
 export default async function AdminTransactionsPage() {
-  const user = await getUserSession();
-  if (!user || user.role !== "admin") redirect("/");
+  await requireRole("admin");
 
   let transactions: AdminTransaction[] = [];
   let totalRevenue = 0;

@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getUserSession } from "@/lib/core/session";
+import { requireRole } from "@/lib/core/session";
 import { getAdminStats } from "@/lib/api/admin";
 import AdminStatCard from "@/components/dashboard/admin/AdminStatCard";
 import {
@@ -20,8 +19,7 @@ export const metadata = {
 };
 
 export default async function AdminOverviewPage() {
-  const user = await getUserSession();
-  if (!user || user.role !== "admin") redirect("/");
+  const user = await requireRole("admin");
 
   let stats = { totalUsers: 0, totalTasks: 0, totalRevenue: 0, activeTasks: 0 };
   try {
