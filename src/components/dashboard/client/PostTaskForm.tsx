@@ -6,7 +6,15 @@ import { createTask } from "@/lib/action/task";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-export default function PostTaskForm({ clientId }: { clientId?: string }) {
+export default function PostTaskForm({
+  clientId,
+  clientName,
+  clientImage,
+}: {
+  clientId?: string;
+  clientName?: string;
+  clientImage?: string;
+}) {
   const router = useRouter();
   const [formData, setFormData] = useState({
     title: "",
@@ -27,6 +35,8 @@ export default function PostTaskForm({ clientId }: { clientId?: string }) {
     const taskData = {
       ...formData,
       clientId,
+      ...(clientName ? { clientName } : {}),
+      ...(clientImage ? { clientImage } : {}),
     }
 
     const result = await createTask(taskData);

@@ -8,6 +8,9 @@ interface NewTask {
   deadline: string;
   budget: string;
   description: string;
+  clientId?: string;
+  clientName?: string;
+  clientImage?: string;
 }
 
 interface InsertTaskResponse {

@@ -8,6 +8,8 @@ export interface Task {
   budget: string;
   description: string;
   clientId: string;
+  clientName?: string;
+  clientImage?: string;
   status: string;
   createdAt: string;
 }
@@ -15,3 +17,7 @@ export interface Task {
 export const getTaskByClientId = async (id: string): Promise<Task[]> => {
   return serverFetch<Task[]>(`/api/tasks?clientId=${id}`);
 };
+
+export const getAllTasks = async (): Promise<Task[]> => {
+  return serverFetch<Task[]>(`/api/tasks`);
+}

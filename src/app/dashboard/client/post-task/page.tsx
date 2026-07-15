@@ -10,5 +10,11 @@ import { getUserSession } from "@/lib/core/session";
 
 export default async function PostTaskPage() {
   const user = await getUserSession();
-  return <PostTaskForm clientId={user?.id} />;
+  return (
+    <PostTaskForm
+      clientId={user?.id}
+      clientName={user?.name ?? undefined}
+      clientImage={user?.image ?? undefined}
+    />
+  );
 }
