@@ -13,6 +13,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/dashboard/admin",
+        destination: "/dashboard/Admin",
+      },
+      {
+        source: "/dashboard/admin/:path*",
+        destination: "/dashboard/Admin/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

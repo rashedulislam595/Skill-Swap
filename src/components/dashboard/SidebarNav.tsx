@@ -55,8 +55,8 @@ export default function SidebarNav({ user }: SidebarNavProps) {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Normalize role
-  const rawRole = user?.role || "client";
+  // Normalize role (lowercase to handle any casing from the database)
+  const rawRole = (user?.role || "client").toLowerCase();
   const role = rawRole === "reader" ? "client" : rawRole === "writer" ? "freelancer" : rawRole;
 
   const roleConfigs: Record<string, RoleConfig> = {

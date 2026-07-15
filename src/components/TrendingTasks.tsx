@@ -143,7 +143,7 @@ function TrendingTaskCard({ task, rank }: { task: Task; rank: number }) {
     >
       {/* Rank badge */}
       <div
-        className={`flex-shrink-0 h-9 w-9 rounded-xl bg-gradient-to-br ${rankColors[rank - 1] ?? rankColors[3]} flex items-center justify-center text-white text-xs font-extrabold shadow-md`}
+        className={` h-9 w-9 rounded-xl bg-linear-to-br ${rankColors[rank - 1] ?? rankColors[3]} flex items-center justify-center text-white text-xs font-extrabold shadow-md`}
       >
         #{rank}
       </div>
@@ -191,12 +191,12 @@ function TrendingTaskCard({ task, rank }: { task: Task; rank: number }) {
               />
             ) : (
               <div
-                className={`h-5 w-5 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white text-[8px] font-bold`}
+                className={`h-5 w-5 rounded-full bg-linear-to-br ${gradient} flex items-center justify-center text-white text-[8px] font-bold`}
               >
                 {initial}
               </div>
             )}
-            <span className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400 truncate max-w-[90px]">
+            <span className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400 truncate max-w-[90]">
               {displayName}
             </span>
           </div>
@@ -208,12 +208,12 @@ function TrendingTaskCard({ task, rank }: { task: Task; rank: number }) {
       </div>
 
       {/* Arrow */}
-      <div className="flex-shrink-0 self-center">
+      <div className=" self-center">
         <ChevronRight className="h-4 w-4 text-zinc-300 dark:text-zinc-600 group-hover:text-blue-500 transition-colors duration-150" />
       </div>
 
       {/* Hover shimmer */}
-      <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent rounded-2xl" />
+      <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-br from-blue-500/5 via-transparent to-transparent rounded-2xl" />
     </Link>
   );
 }
@@ -238,7 +238,7 @@ export default async function TrendingTasks() {
         <div className="mb-10">
           <div className="text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 px-4 py-1.5 text-xs font-semibold text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-900/30 mb-4">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 px-4 py-1.5 text-xs font-semibold text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-900/30 mb-4">
               <Flame className="h-3.5 w-3.5 fill-current animate-pulse" />
               <span>Hot Right Now</span>
             </div>
@@ -283,7 +283,7 @@ export default async function TrendingTasks() {
           </div>
           <Link
             href="/browse-tasks"
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-500/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
+            className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-500/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
           >
             Explore All Tasks
             <ChevronRight className="h-4 w-4" />
