@@ -1,6 +1,7 @@
-import { serverFetch } from "../core/server";
+import { authFetch } from "../core/server";
+import { getAuthToken } from "../core/session";
 
-// ─── Interfaces ──────────────────────────────────────────────────────────────
+// ─── Interfaces ───────────────────────────────────────────────────────────────
 
 export interface AdminStats {
   totalUsers: number;
@@ -40,20 +41,25 @@ export interface AdminTransaction {
   status: string;
 }
 
-// ─── Fetch Functions ──────────────────────────────────────────────────────────
+// ─── Authenticated Fetch Functions ───────────────────────────────────────────
+// All admin routes require a valid session token.
 
 export const getAdminStats = async (): Promise<AdminStats> => {
-  return serverFetch<AdminStats>(`/api/admin/stats`);
+  const token = await getAuthToken();
+  return authFetch<AdminStats>(`/api/admin/stats`, { token });
 };
 
 export const getAdminUsers = async (): Promise<AdminUser[]> => {
-  return serverFetch<AdminUser[]>(`/api/admin/users`);
+  const token = await getAuthToken();
+  return authFetch<AdminUser[]>(`/api/admin/users`, { token });
 };
 
 export const getAdminTasks = async (): Promise<AdminTask[]> => {
-  return serverFetch<AdminTask[]>(`/api/admin/tasks`);
+  const token = await getAuthToken();
+  return authFetch<AdminTask[]>(`/api/admin/tasks`, { token });
 };
 
 export const getAdminTransactions = async (): Promise<AdminTransaction[]> => {
-  return serverFetch<AdminTransaction[]>(`/api/admin/transactions`);
+  const token = await getAuthToken();
+  return authFetch<AdminTransaction[]>(`/api/admin/transactions`, { token });
 };
